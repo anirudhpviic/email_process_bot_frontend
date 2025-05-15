@@ -17,10 +17,14 @@ export default function Home() {
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
   const [botGeneratedEmail, setBotGeneratedEmail] = useState("");
+  const [categorySubCategoryAndScenario, setCategorySubCategoryAndScenario] =
+    useState({});
   const [meaningMatchScore, setMeaningMatchScore] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isEmailGenerating, setIsEmailGenerating] = useState(false);
   const [isEmailComparing, setIsEmailComparing] = useState(false);
+  const [bestOne, setBestOne] = useState("");
+  const [whyItsBest, setWhyItsBest] = useState("");
 
   const handleGenerate = async () => {
     setIsEditing(false);
@@ -35,6 +39,8 @@ export default function Home() {
       );
       setOutputText(res?.data?.data?.responseEmail);
       setBotGeneratedEmail(res?.data?.data?.responseEmail);
+      const { category, subcategory, scenario } = res?.data?.data;
+      setCategorySubCategoryAndScenario({ category, subcategory, scenario });
       toast("Response Email Generated");
     } catch (error) {
       console.error(error);
@@ -60,12 +66,20 @@ export default function Home() {
       const formData = new FormData();
       formData.append("botGeneratedEmail", botGeneratedEmail);
       formData.append("editedEmail", outputText);
+      formData.append("category", categorySubCategoryAndScenario.category);
+      formData.append(
+        "subcategory",
+        categorySubCategoryAndScenario.subcategory
+      );
+      formData.append("scenario", categorySubCategoryAndScenario.scenario);
 
       const res = await axios.post(
         "http://localhost:3000/compare-emails",
         formData
       );
       setMeaningMatchScore(res?.data?.data?.meaningMatchScore);
+      setBestOne(res?.data?.data?.bestOne);
+      setWhyItsBest(res?.data?.data?.whyItsBest);
       toast("Emails Compared");
     } catch (error) {
       console.error(error);
@@ -129,6 +143,10 @@ export default function Home() {
               <CardDescription>
                 Edit bot generated email response and compare.
               </CardDescription>
+              <h2 className="mt-2 text-sm ">
+                Tagged Category as {categorySubCategoryAndScenario.category} and
+                Subcategory as {categorySubCategoryAndScenario.subcategory}
+              </h2>
             </div>
             <Button onClick={handleCopy}>Copy</Button>
           </CardHeader>
@@ -166,7 +184,11 @@ export default function Home() {
         </Card>
       </main>
       {meaningMatchScore !== null && (
-        <EmailMatchChart meaningMatchScore={meaningMatchScore} />
+        <EmailMatchChart
+          meaningMatchScore={meaningMatchScore}
+          bestOne={bestOne}
+          whyItsBest={whyItsBest}
+        />
       )}
       <ToastContainer />
     </>

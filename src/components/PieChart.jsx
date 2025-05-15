@@ -6,7 +6,7 @@ import {
   RadialBarChart,
 } from "recharts";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 
 // Updated config for percentage representation
@@ -20,7 +20,11 @@ const chartConfig = {
   },
 };
 
-export function EmailMatchChart({ meaningMatchScore = 0 }) {
+export function EmailMatchChart({
+  meaningMatchScore = 0,
+  bestOne = "",
+  whyItsBest = "",
+}) {
   const chartData = [
     {
       type: "match",
@@ -38,6 +42,9 @@ export function EmailMatchChart({ meaningMatchScore = 0 }) {
         <CardTitle className="mx-auto">
           Email Comparison Match Percentage
         </CardTitle>
+        <CardDescription className="mx-auto">
+          {bestOne} :- {whyItsBest}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
