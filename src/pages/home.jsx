@@ -44,7 +44,11 @@ export default function Home() {
   };
 
   const handleEditToggle = () => {
+    if (isEditing) {
+      setOutputText(botGeneratedEmail);
+    }
     setIsEditing(!isEditing);
+
     toast(isEditing ? "Editing Disabled" : "Editing Enabled");
   };
 
