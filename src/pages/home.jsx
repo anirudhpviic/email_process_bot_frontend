@@ -74,6 +74,15 @@ export default function Home() {
     }
   };
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(outputText);
+      toast("Copied to clipboard");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <main className="flex flex-col md:flex-row min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8 gap-4 sm:gap-6 lg:gap-8">
@@ -112,13 +121,16 @@ export default function Home() {
 
         {/* Right Section */}
         <Card className="w-full md:w-1/2 flex flex-col shadow-xl rounded-lg">
-          <CardHeader>
-            <CardTitle className="text-xl sm:text-2xl font-semibold">
-              Edit And Compare
-            </CardTitle>
-            <CardDescription>
-              Edit bot generated email response and compare.
-            </CardDescription>
+          <CardHeader className="flex justify-between">
+            <div>
+              <CardTitle className="text-xl sm:text-2xl font-semibold">
+                Edit And Compare
+              </CardTitle>
+              <CardDescription>
+                Edit bot generated email response and compare.
+              </CardDescription>
+            </div>
+            <Button onClick={handleCopy}>Copy</Button>
           </CardHeader>
           <CardContent className="flex flex-col flex-grow p-4 sm:p-6">
             <Textarea
