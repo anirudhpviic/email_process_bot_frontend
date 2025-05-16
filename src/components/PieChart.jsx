@@ -53,7 +53,9 @@ export function EmailMatchChart({
             <span className="font-bold">Best One : </span>
             {bestOne === "botGeneratedEmail"
               ? "Bot Generated"
-              : "User Generated"}
+              : bestOne === "editedEmail"
+              ? "User Generated"
+              : "Both"}
           </h2>
           <h2>
             <span className="font-bold">Why its best : </span>

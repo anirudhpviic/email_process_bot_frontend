@@ -143,10 +143,15 @@ export default function Home() {
               <CardDescription>
                 Edit bot generated email response and compare.
               </CardDescription>
-              <h2 className="mt-2 text-sm ">
-                Tagged Category as {categorySubCategoryAndScenario.category} and
-                Subcategory as {categorySubCategoryAndScenario.subcategory}
-              </h2>
+              {botGeneratedEmail &&
+              categorySubCategoryAndScenario.category &&
+              categorySubCategoryAndScenario.subcategory ? (
+                <h2 className="mt-2 text-sm ">
+                  Tagged Category as {categorySubCategoryAndScenario.category}{" "}
+                  and Subcategory as{" "}
+                  {categorySubCategoryAndScenario.subcategory}
+                </h2>
+              ) : null}
             </div>
             <Button onClick={handleCopy}>Copy</Button>
           </CardHeader>
