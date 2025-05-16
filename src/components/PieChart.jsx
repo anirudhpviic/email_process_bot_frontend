@@ -51,7 +51,9 @@ export function EmailMatchChart({
         <CardDescription className="mx-auto">
           <h2>
             <span className="font-bold">Best One : </span>
-            {bestOne === "botGeneratedEmail" ? "Bot Generated" : "User"}
+            {bestOne === "botGeneratedEmail"
+              ? "Bot Generated"
+              : "User Generated"}
           </h2>
           <h2>
             <span className="font-bold">Why its best : </span>

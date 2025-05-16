@@ -60,11 +60,14 @@ export default function Analyze() {
                       Issues:
                     </h2>
                     <Separator className="bg-cyan-200 mb-4" />
-                    <div className="pl-4 border-l-2 border-cyan-500">
-                      <p className="text-slate-700">
-                        {summaryData?.customerIssue}
-                      </p>
-                    </div>
+                    <ul className="space-y-3">
+                      {summaryData?.customerIssue.map((issue, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="inline-block w-2 h-2 rounded-full bg-cyan-500 mt-2 mr-3"></span>
+                          <span className="text-slate-700">{issue}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </Card>
 
@@ -95,6 +98,9 @@ export default function Analyze() {
                     <Separator className="bg-purple-200 mb-4" />
                     <div className="pl-4 border-l-2 border-purple-500">
                       <p className="text-slate-700">{summaryData?.sentiment}</p>
+                      <p className="text-slate-700">
+                        Sentiment Score: {summaryData?.sentimentScore}%
+                      </p>
                     </div>
                   </div>
                 </Card>
