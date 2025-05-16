@@ -2,10 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { X } from "lucide-react";
 
 export default function Analyze() {
   const [analyzes, setAnalyzes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [openEmailIndex, setOpenEmailIndex] = useState(false);
 
   const fetchAnalyzes = async () => {
     setLoading(true);
@@ -38,7 +48,18 @@ export default function Analyze() {
           {analyzes?.map((summaryData) => {
             return (
               <div key={summaryData?.index} className="flex flex-col gap-3">
-                <CardHeader>{summaryData?.index + ")"}</CardHeader>
+                <CardHeader className="flex">
+                  {summaryData?.index + ")"}
+                  {/* <Button onClick={() => setOpenEmailIndex(summaryData?.index)}>
+                    Show Email
+                  </Button> */}
+                  <a
+                    onClick={() => setOpenEmailIndex(summaryData?.index)}
+                    className="ml-2 underline text-blue-500 cursor-pointer"
+                  >
+                    Show Email
+                  </a>
+                </CardHeader>
                 <Card className="border-l-4 border-l-emerald-500 bg-emerald-50">
                   <div className="p-6">
                     <h2 className="text-xl font-medium text-slate-700 mb-2">
@@ -119,6 +140,27 @@ export default function Analyze() {
                     </div>
                   </div>
                 </Card>
+
+                {/* Email Dialog */}
+                <Dialog
+                  open={openEmailIndex === summaryData?.index}
+                  onOpenChange={(open) => {
+                    if (!open) setOpenEmailIndex(null);
+                  }}
+                >
+                  <DialogContent className="sm:max-w-[4/4]">
+                    <DialogHeader>
+                      <DialogTitle className="flex justify-between items-center">
+                        <span>Email</span>
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="mt-4 p-4 bg-slate-50 rounded-md border h-[70vh] overflow-auto">
+                      <p className="whitespace-pre-wrap">
+                        {summaryData?.email || "Email content not available"}
+                      </p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             );
           })}
