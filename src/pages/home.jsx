@@ -13,16 +13,18 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { EmailMatchChart } from "@/components/PieChart";
 
+const emailTypes = ["1", "2", "3"];
+
 export default function Home() {
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
-  const [botGeneratedEmail, setBotGeneratedEmail] = useState("");
-  const [categorySubCategoryAndScenario, setCategorySubCategoryAndScenario] =
-    useState({});
-  const [meaningMatchScore, setMeaningMatchScore] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isEmailGenerating, setIsEmailGenerating] = useState(false);
   const [isEmailComparing, setIsEmailComparing] = useState(false);
+  const [emailType, setEmailType] = useState("1");
+  const [generatedEmailResponses, setGeneratedEmailResponses] = useState(null);
+
+  const [meaningMatchScore, setMeaningMatchScore] = useState(null);
   const [bestOne, setBestOne] = useState("");
   const [whyItsBest, setWhyItsBest] = useState("");
 
@@ -37,11 +39,14 @@ export default function Home() {
         "http://localhost:3000/generate-email-response",
         formData
       );
-      setOutputText(res?.data?.data?.responseEmail);
-      setBotGeneratedEmail(res?.data?.data?.responseEmail);
-      const { category, subcategory, scenario } = res?.data?.data;
-      setCategorySubCategoryAndScenario({ category, subcategory, scenario });
-      toast("Response Email Generated");
+
+      setGeneratedEmailResponses(res?.data?.data);
+      const responseData = res?.data?.data?.find(
+        (r) => r.emailType == emailType
+      );
+
+      setOutputText(responseData?.responseEmail);
+      toast("Response Emails Generated");
     } catch (error) {
       console.error(error);
     } finally {
@@ -58,20 +63,21 @@ export default function Home() {
     toast(isEditing ? "Editing Disabled" : "Editing Enabled");
   };
 
-  const handleSubmit = async () => {
+  const handleCompare = async () => {
     setIsEditing(false);
     setIsEmailComparing(true);
 
     try {
-      const formData = new FormData();
-      formData.append("botGeneratedEmail", botGeneratedEmail);
-      formData.append("editedEmail", outputText);
-      formData.append("category", categorySubCategoryAndScenario.category);
-      formData.append(
-        "subcategory",
-        categorySubCategoryAndScenario.subcategory
+      const emailData = generatedEmailResponses.find(
+        (r) => r.emailType == emailType
       );
-      formData.append("scenario", categorySubCategoryAndScenario.scenario);
+      console.log("comapare:", emailData);
+      const formData = new FormData();
+      formData.append("botGeneratedEmail", emailData?.responseEmail);
+      formData.append("editedEmail", outputText);
+      formData.append("category", emailData?.category);
+      formData.append("subcategory", emailData?.subcategory);
+      formData.append("scenario", emailData?.scenario);
 
       const res = await axios.post(
         "http://localhost:3000/compare-emails",
@@ -95,6 +101,12 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleTypeChange = (t) => {
+    setEmailType(t);
+    const emailData = generatedEmailResponses.find((r) => r.emailType == t);
+    setOutputText(emailData?.responseEmail);
   };
 
   return (
@@ -143,13 +155,35 @@ export default function Home() {
               <CardDescription>
                 Edit bot generated email response and compare.
               </CardDescription>
-              {botGeneratedEmail &&
-              categorySubCategoryAndScenario.category &&
-              categorySubCategoryAndScenario.subcategory ? (
+              <div className="flex gap-4">
+                {emailTypes.map((t, index) => {
+                  return (
+                    <Button
+                      key={index}
+                      className={`mt-4 sm:mt-6 w-full sm:w-auto self-start py-2.5 px-5 sm:py-3 sm:px-6 text-sm sm:text-base ${
+                        t !== emailType ? "bg-gray-400" : ""
+                      }`}
+                      onClick={() => handleTypeChange(t)}
+                    >
+                      Email: {t}
+                    </Button>
+                  );
+                })}
+              </div>
+              {generatedEmailResponses && generatedEmailResponses.length > 0 ? (
                 <h2 className="mt-2 text-sm ">
-                  Tagged Category as {categorySubCategoryAndScenario.category}{" "}
+                  Tagged Category as{" "}
+                  {
+                    generatedEmailResponses.find(
+                      (t) => t.emailType == emailType
+                    )?.category
+                  }{" "}
                   and Subcategory as{" "}
-                  {categorySubCategoryAndScenario.subcategory}
+                  {
+                    generatedEmailResponses.find(
+                      (t) => t.emailType == emailType
+                    )?.subcategory
+                  }
                 </h2>
               ) : null}
             </div>
@@ -173,7 +207,7 @@ export default function Home() {
                 {isEditing ? "Cancel" : "Edit"}
               </Button>
               <Button
-                onClick={handleSubmit}
+                onClick={handleCompare}
                 disabled={!isEditing || isEmailComparing}
                 className="py-2.5 px-5 sm:py-3 sm:px-6 text-sm sm:text-base w-full sm:w-auto"
               >
