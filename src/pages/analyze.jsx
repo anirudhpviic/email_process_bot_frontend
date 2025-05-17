@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { X } from "lucide-react";
 
 export default function Analyze() {
   const [analyzes, setAnalyzes] = useState([]);
@@ -92,7 +89,7 @@ export default function Analyze() {
                   </div>
                 </Card>
 
-                {/* Key Insights Section */}
+                Key Insights Section
                 <Card className="border-l-4 border-l-amber-500 bg-amber-50">
                   <div className="p-6">
                     <h2 className="text-xl font-medium text-slate-700 mb-2">
