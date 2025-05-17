@@ -105,6 +105,7 @@ export default function Home() {
 
   const handleTypeChange = (t) => {
     setEmailType(t);
+    setMeaningMatchScore(null);
     const emailData = generatedEmailResponses.find((r) => r.emailType == t);
     setOutputText(emailData?.responseEmail);
   };
